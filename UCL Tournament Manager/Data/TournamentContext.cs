@@ -10,6 +10,12 @@ namespace UCL_Tournament_Manager.Data
 {
     public class TournamentContext : DbContext
     {
+
+        public TournamentContext(DbContextOptions<TournamentContext> options)
+            : base(options)
+        {
+        }
+
         // DbSets for each model
         public DbSet<Team> Teams { get; set; }
         public DbSet<Player> Players { get; set; }
@@ -17,14 +23,6 @@ namespace UCL_Tournament_Manager.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<Match> Matches { get; set; }
 
-        // Configure the connection string
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=UCL_Tournament;Trusted_Connection=True;");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

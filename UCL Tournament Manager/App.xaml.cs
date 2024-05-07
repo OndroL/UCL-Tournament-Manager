@@ -14,7 +14,9 @@ namespace UCL_Tournament_Manager
     {
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            using (var context = new TournamentContext())
+            var optionsBuilder = new DbContextOptionsBuilder<TournamentContext>();
+            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=UCL_Tournament;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;");
+            using (var context = new TournamentContext(optionsBuilder.Options))
             {
                 try
                 {
