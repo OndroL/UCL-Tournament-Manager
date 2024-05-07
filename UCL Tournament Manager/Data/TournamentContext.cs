@@ -26,24 +26,32 @@ namespace UCL_Tournament_Manager.Data
             }
         }
 
-        // Customize relationships, if needed
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // One-to-many relationship between Tournament and Groups
+            modelBuilder.Entity<Match>()
+                .HasOne(m => m.Team1)
+                .WithMany()
+                .HasForeignKey(m => m.Team1Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Match>()
+                .HasOne(m => m.Team2)
+                .WithMany()
+                .HasForeignKey(m => m.Team2Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Tournament>()
                 .HasMany(t => t.Groups)
                 .WithOne(g => g.Tournament)
                 .HasForeignKey(g => g.TournamentId);
 
-            // One-to-many relationship between Group and Teams
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Teams)
                 .WithOne(t => t.Group)
                 .HasForeignKey(t => t.GroupId);
 
-            // One-to-many relationship between Group and Matches
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Matches)
                 .WithOne(m => m.Group)
