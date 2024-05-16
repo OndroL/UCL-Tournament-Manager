@@ -13,6 +13,7 @@ namespace UCL_Tournament_Manager.Views
 
             viewModel.NavigateToCreateTournamentView = NavigateToCreateTournamentView;
             viewModel.NavigateToCreateTeamView = NavigateToCreateTeamWindow;
+            viewModel.NavigateToGenerateBracketView = NavigateToGenerateBracketWindow;
 
             DataContext = viewModel;
         }
@@ -24,6 +25,7 @@ namespace UCL_Tournament_Manager.Views
             createTournamentViewModel.NavigateBack = () =>
             {
                 createTournamentWindow.Close();
+                MainWindowViewModel.LoadData();
                 this.Show();
             };
             createTournamentWindow.DataContext = createTournamentViewModel;
@@ -42,6 +44,20 @@ namespace UCL_Tournament_Manager.Views
             };
             createTeamWindow.DataContext = createTeamViewModel;
             createTeamWindow.Show();
+            this.Hide();
+        }
+
+        private void NavigateToGenerateBracketWindow()
+        {
+            var generateBracketWindow = new GenerateBracketWindow();
+            var generateBracketViewModel = ((App)Application.Current).ServiceProvider.GetRequiredService<GenerateBracketViewModel>();
+            generateBracketViewModel.NavigateBack = () =>
+            {
+                generateBracketWindow.Close();
+                this.Show();
+            };
+            generateBracketWindow.DataContext = generateBracketViewModel;
+            generateBracketWindow.Show();
             this.Hide();
         }
     }

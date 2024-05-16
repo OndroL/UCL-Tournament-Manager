@@ -54,24 +54,32 @@ namespace UCL_Tournament_Manager.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Team1Id")
+                    b.Property<bool?>("IsTeam1Winner")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("NextMatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Team1Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Team1Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("Team2Id")
+                    b.Property<int?>("Team2Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Team2Score")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TournamentId")
+                    b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("MatchId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("NextMatchId");
 
                     b.HasIndex("Team1Id");
 
@@ -183,23 +191,30 @@ namespace UCL_Tournament_Manager.Migrations
                         .WithMany("Matches")
                         .HasForeignKey("GroupId");
 
+                    b.HasOne("UCL_Tournament_Manager.Models.Match", "NextMatch")
+                        .WithMany()
+                        .HasForeignKey("NextMatchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("UCL_Tournament_Manager.Models.Team", "Team1")
                         .WithMany()
                         .HasForeignKey("Team1Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Team", "Team2")
                         .WithMany()
                         .HasForeignKey("Team2Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
                         .WithMany()
-                        .HasForeignKey("TournamentId");
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Group");
+
+                    b.Navigation("NextMatch");
 
                     b.Navigation("Team1");
 

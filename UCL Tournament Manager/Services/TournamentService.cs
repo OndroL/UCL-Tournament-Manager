@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using UCL_Tournament_Manager.Data;
+﻿using UCL_Tournament_Manager.Data;
 using UCL_Tournament_Manager.Models;
 
 namespace UCL_Tournament_Manager.Services
@@ -31,7 +29,8 @@ namespace UCL_Tournament_Manager.Services
                 Name = name,
                 Location = location,
                 StartDate = startDate,
-                EndDate = endDate
+                EndDate = endDate,
+                Teams = null
             };
             await _repository.AddAsync(tournament);
             await _repository.SaveChangesAsync();
@@ -62,13 +61,73 @@ namespace UCL_Tournament_Manager.Services
         public Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
             throw new NotImplementedException();
-            // Implement logic to generate groups
         }
 
-        public Task GenerateSpiderAsync(int tournamentId)
+        public async Task GenerateBracketAsync(int tournamentId)
         {
-            throw new NotImplementedException();
-            // Implement logic to generate a knockout spider
+            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
+
+           
+            if (tournament == null)
+            {
+                throw new Exception("Tournament not found");
+            }
+            if (tournament.Teams.Count > 0)
+            {
+                throw new Exception($"Tournament has already generated Bracket ${tournament.Teams.Count}");
+            }
+
+            var teams = await _repository.GetAllAsync<Team>();
+            var teamsList = teams.ToList();
+
+            if (teamsList.Count < 4)
+            {
+                throw new Exception("There must be at least 4 teams to generate the bracket");
+            }
+
+            var random = new Random();
+            var selectedTeams = teamsList.OrderBy(t => random.Next()).Take(4).ToList();
+            tournament.Teams = selectedTeams;
+
+            var match1 = new Match
+            {
+                TournamentId = tournamentId,
+                Tournament = tournament,
+                Team1 = selectedTeams[0],
+                Team1Id = selectedTeams[0].TeamId,
+                Team2 = selectedTeams[1],
+                Team2Id = selectedTeams[1].TeamId
+            };
+
+            var match2 = new Match
+            {
+                TournamentId = tournamentId,
+                Tournament = tournament,
+                Team1 = selectedTeams[2],
+                Team1Id = selectedTeams[2].TeamId,
+                Team2 = selectedTeams[3],
+                Team2Id = selectedTeams[3].TeamId
+            };
+
+            await _repository.AddAsync(match1);
+            await _repository.AddAsync(match2);
+            await _repository.SaveChangesAsync();
+
+            var finalMatch = new Match
+            {
+                TournamentId = tournamentId,
+                Tournament = tournament
+            };
+
+            await _repository.AddAsync(finalMatch);
+            await _repository.SaveChangesAsync();
+
+            match1.NextMatchId = finalMatch.MatchId;
+            match2.NextMatchId = finalMatch.MatchId;
+
+            await _repository.UpdateAsync(match1);
+            await _repository.UpdateAsync(match2);
+            await _repository.SaveChangesAsync();
         }
 
         public async Task RecordMatchScoreAsync(int matchId, int scoreA, int scoreB)
@@ -78,8 +137,33 @@ namespace UCL_Tournament_Manager.Services
             {
                 match.Team1Score = scoreA;
                 match.Team2Score = scoreB;
+
+                match.IsTeam1Winner = scoreA > scoreB;
+
+                if (match.NextMatchId.HasValue)
+                {
+                    var nextMatch = await _repository.GetByIdAsync<Match>(match.NextMatchId.Value);
+                    if (nextMatch != null)
+                    {
+                        if (!nextMatch.Team1Id.HasValue)
+                        {
+                            nextMatch.Team1Id = (bool)match.IsTeam1Winner ? match.Team1Id : match.Team2Id;
+                        }
+                        else if (!nextMatch.Team2Id.HasValue)
+                        {
+                            nextMatch.Team2Id = (bool)match.IsTeam1Winner ? match.Team1Id : match.Team2Id;
+                        }
+                        await _repository.UpdateAsync(nextMatch);
+                    }
+                }
                 await _repository.UpdateAsync(match);
+                await _repository.SaveChangesAsync();
             }
+        }
+        public async Task<IEnumerable<Match>> GetMatchesByTournamentIdAsync(int tournamentId)
+        {
+            var matches = await _repository.GetAllAsync<Match>();
+            return matches.Where(m => m.TournamentId == tournamentId).ToList();
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UCL_Tournament_Manager.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialMigrationFixed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     GroupId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GroupName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GroupName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TournamentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -54,8 +54,8 @@ namespace UCL_Tournament_Manager.Migrations
                     TeamId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GroupId = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false)
+                    GroupId = table.Column<int>(type: "int", nullable: true),
+                    TournamentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,8 +64,7 @@ namespace UCL_Tournament_Manager.Migrations
                         name: "FK_Teams_Groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "Groups",
-                        principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "GroupId");
                     table.ForeignKey(
                         name: "FK_Teams_Tournaments_TournamentId",
                         column: x => x.TournamentId,
@@ -80,12 +79,14 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     MatchId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Team1Id = table.Column<int>(type: "int", nullable: false),
-                    Team2Id = table.Column<int>(type: "int", nullable: false),
+                    Team1Id = table.Column<int>(type: "int", nullable: true),
+                    Team2Id = table.Column<int>(type: "int", nullable: true),
                     Team1Score = table.Column<int>(type: "int", nullable: false),
                     Team2Score = table.Column<int>(type: "int", nullable: false),
                     GroupId = table.Column<int>(type: "int", nullable: true),
-                    TournamentId = table.Column<int>(type: "int", nullable: true)
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    NextMatchId = table.Column<int>(type: "int", nullable: true),
+                    IsTeam1Winner = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,6 +96,12 @@ namespace UCL_Tournament_Manager.Migrations
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "GroupId");
+                    table.ForeignKey(
+                        name: "FK_Matches_Matches_NextMatchId",
+                        column: x => x.NextMatchId,
+                        principalTable: "Matches",
+                        principalColumn: "MatchId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Matches_Teams_Team1Id",
                         column: x => x.Team1Id,
@@ -111,7 +118,8 @@ namespace UCL_Tournament_Manager.Migrations
                         name: "FK_Matches_Tournaments_TournamentId",
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
-                        principalColumn: "TournamentId");
+                        principalColumn: "TournamentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,6 +153,11 @@ namespace UCL_Tournament_Manager.Migrations
                 name: "IX_Matches_GroupId",
                 table: "Matches",
                 column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Matches_NextMatchId",
+                table: "Matches",
+                column: "NextMatchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Matches_Team1Id",

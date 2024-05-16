@@ -12,8 +12,8 @@ using UCL_Tournament_Manager.Data;
 namespace UCL_Tournament_Manager.Migrations
 {
     [DbContext(typeof(TournamentContext))]
-    [Migration("20240516032553_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240516122243_InitialMigrationFixed")]
+    partial class InitialMigrationFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace UCL_Tournament_Manager.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupId"));
 
                     b.Property<string>("GroupName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TournamentId")
@@ -58,24 +57,32 @@ namespace UCL_Tournament_Manager.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Team1Id")
+                    b.Property<bool?>("IsTeam1Winner")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("NextMatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Team1Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Team1Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("Team2Id")
+                    b.Property<int?>("Team2Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Team2Score")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TournamentId")
+                    b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("MatchId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("NextMatchId");
 
                     b.HasIndex("Team1Id");
 
@@ -124,14 +131,14 @@ namespace UCL_Tournament_Manager.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeamId"));
 
-                    b.Property<int>("GroupId")
+                    b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TournamentId")
+                    b.Property<int?>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("TeamId");
@@ -187,23 +194,30 @@ namespace UCL_Tournament_Manager.Migrations
                         .WithMany("Matches")
                         .HasForeignKey("GroupId");
 
+                    b.HasOne("UCL_Tournament_Manager.Models.Match", "NextMatch")
+                        .WithMany()
+                        .HasForeignKey("NextMatchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("UCL_Tournament_Manager.Models.Team", "Team1")
                         .WithMany()
                         .HasForeignKey("Team1Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Team", "Team2")
                         .WithMany()
                         .HasForeignKey("Team2Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
                         .WithMany()
-                        .HasForeignKey("TournamentId");
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Group");
+
+                    b.Navigation("NextMatch");
 
                     b.Navigation("Team1");
 
@@ -227,15 +241,12 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     b.HasOne("UCL_Tournament_Manager.Models.Group", "Group")
                         .WithMany("Teams")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
                         .WithMany("Teams")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Group");
 

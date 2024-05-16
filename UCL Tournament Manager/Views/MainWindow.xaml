@@ -11,7 +11,18 @@
         <StackPanel Grid.Row="0">
             <Button Command="{Binding NavigateToCreateTournamentCommand}" Content="Create Tournament" />
             <Button Command="{Binding NavigateToCreateTeamCommand}" Content="Create Team" />
-            <ListBox ItemsSource="{Binding Tournaments}" DisplayMemberPath="Name" />
+            <Button Command="{Binding NavigateToGenerateBracketCommand}" Content="Generate Bracket" />
+            <ListBox ItemsSource="{Binding Tournaments}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding TournamentId}" Margin="5" />
+                            <TextBlock Text=" - " Margin="5" />
+                            <TextBlock Text="{Binding Name}" Margin="5" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </Grid>
 </Window>

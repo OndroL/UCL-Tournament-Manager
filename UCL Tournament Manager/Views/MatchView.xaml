@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="UCL_Tournament_Manager.Views.MatchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border BorderBrush="Black" BorderThickness="1" Margin="5">
+        <StackPanel Margin="10">
+            <TextBlock Text="{Binding Team1.Name}" FontWeight="Bold" FontSize="14"/>
+            <TextBlock Text="vs" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBlock Text="{Binding Team2.Name}" FontWeight="Bold" FontSize="14"/>
+        </StackPanel>
+    </Border>
+</UserControl>

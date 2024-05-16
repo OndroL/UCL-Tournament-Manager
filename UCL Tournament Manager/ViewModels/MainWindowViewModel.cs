@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using UCL_Tournament_Manager.Models;
 using UCL_Tournament_Manager.Services;
-using UCL_Tournament_Manager.Views;
 
 namespace UCL_Tournament_Manager.ViewModels
 {
@@ -13,9 +12,12 @@ namespace UCL_Tournament_Manager.ViewModels
         public ObservableCollection<Tournament> Tournaments { get; set; }
         public ICommand NavigateToCreateTournamentCommand { get; }
         public ICommand NavigateToCreateTeamCommand { get; }
+        public ICommand NavigateToGenerateBracketCommand { get; }
 
         public Action? NavigateToCreateTournamentView { get; set; }
         public Action? NavigateToCreateTeamView { get; set; }
+        public Action? NavigateToGenerateBracketView { get; set; }
+
 
         public MainWindowViewModel(TournamentService tournamentService)
         {
@@ -24,10 +26,11 @@ namespace UCL_Tournament_Manager.ViewModels
 
             NavigateToCreateTournamentCommand = new RelayCommand(() => NavigateToCreateTournamentView?.Invoke());
             NavigateToCreateTeamCommand = new RelayCommand(() => NavigateToCreateTeamView?.Invoke());
+            NavigateToGenerateBracketCommand = new RelayCommand(() => NavigateToGenerateBracketView?.Invoke());
             LoadData();
         }
 
-        private async void LoadData()
+        public async void LoadData()
         {
             var tournaments = await _tournamentService.GetTournamentsAsync();
             Tournaments.Clear();

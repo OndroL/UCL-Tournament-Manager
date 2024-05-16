@@ -33,13 +33,22 @@ namespace UCL_Tournament_Manager.Data
                 .HasOne(m => m.Team1)
                 .WithMany()
                 .HasForeignKey(m => m.Team1Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             modelBuilder.Entity<Match>()
                 .HasOne(m => m.Team2)
                 .WithMany()
                 .HasForeignKey(m => m.Team2Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Match>()
+                .HasOne(m => m.NextMatch)
+                .WithMany()
+                .HasForeignKey(m => m.NextMatchId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             modelBuilder.Entity<Tournament>()
                 .HasMany(t => t.Groups)
