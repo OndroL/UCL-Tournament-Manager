@@ -19,6 +19,11 @@ namespace UCL_Tournament_Manager.Services
             return await _repository.GetAllAsync<Tournament>();
         }
 
+        public async Task<IEnumerable<Team>> GetTeamsAsync()
+        {
+            return await _repository.GetAllAsync<Team>();
+        }
+
         public async Task CreateTournamentAsync(string name, string location, DateTime startDate, DateTime endDate)
         {
             var tournament = new Tournament
@@ -38,6 +43,16 @@ namespace UCL_Tournament_Manager.Services
             {
                 Name = teamName,
                 TournamentId = tournamentId
+            };
+            await _repository.AddAsync(team);
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task CreateTeamAsync(string teamName)
+        {
+            var team = new Team
+            {
+                Name = teamName,
             };
             await _repository.AddAsync(team);
             await _repository.SaveChangesAsync();

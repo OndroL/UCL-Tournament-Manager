@@ -10,7 +10,10 @@ namespace UCL_Tournament_Manager.Views
         {
             InitializeComponent();
             var viewModel = ((App)Application.Current).ServiceProvider.GetRequiredService<MainWindowViewModel>();
+
             viewModel.NavigateToCreateTournamentView = NavigateToCreateTournamentView;
+            viewModel.NavigateToCreateTeamView = NavigateToCreateTeamWindow;
+
             DataContext = viewModel;
         }
 
@@ -25,6 +28,20 @@ namespace UCL_Tournament_Manager.Views
             };
             createTournamentWindow.DataContext = createTournamentViewModel;
             createTournamentWindow.Show();
+            this.Hide();
+        }
+
+        private void NavigateToCreateTeamWindow()
+        {
+            var createTeamWindow = new CreateTeamWindow();
+            var createTeamViewModel = ((App)Application.Current).ServiceProvider.GetRequiredService<CreateTeamViewModel>();
+            createTeamViewModel.NavigateBack = () =>
+            {
+                createTeamWindow.Close();
+                this.Show();
+            };
+            createTeamWindow.DataContext = createTeamViewModel;
+            createTeamWindow.Show();
             this.Hide();
         }
     }

@@ -10,6 +10,7 @@
 
         <StackPanel Grid.Row="0">
             <Button Command="{Binding NavigateToCreateTournamentCommand}" Content="Create Tournament" />
+            <Button Command="{Binding NavigateToCreateTeamCommand}" Content="Create Team" />
             <ListBox ItemsSource="{Binding Tournaments}" DisplayMemberPath="Name" />
         </StackPanel>
     </Grid>

@@ -12,8 +12,10 @@ namespace UCL_Tournament_Manager.ViewModels
 
         public ObservableCollection<Tournament> Tournaments { get; set; }
         public ICommand NavigateToCreateTournamentCommand { get; }
+        public ICommand NavigateToCreateTeamCommand { get; }
 
         public Action? NavigateToCreateTournamentView { get; set; }
+        public Action? NavigateToCreateTeamView { get; set; }
 
         public MainWindowViewModel(TournamentService tournamentService)
         {
@@ -21,7 +23,7 @@ namespace UCL_Tournament_Manager.ViewModels
             Tournaments = new ObservableCollection<Tournament>();
 
             NavigateToCreateTournamentCommand = new RelayCommand(() => NavigateToCreateTournamentView?.Invoke());
-
+            NavigateToCreateTeamCommand = new RelayCommand(() => NavigateToCreateTeamView?.Invoke());
             LoadData();
         }
 
