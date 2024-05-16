@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UCL_Tournament_Manager.Data;
 using UCL_Tournament_Manager.Models;
@@ -15,52 +14,56 @@ namespace UCL_Tournament_Manager.Services
             _repository = repository;
         }
 
-        public async Task CreateTournamentAsync(string name)
+        public async Task<IEnumerable<Tournament>> GetTournamentsAsync()
         {
-            var tournament = new Tournament { Name = name };
+            return await _repository.GetAllAsync<Tournament>();
+        }
+
+        public async Task CreateTournamentAsync(string name, string location, DateTime startDate, DateTime endDate)
+        {
+            var tournament = new Tournament
+            {
+                Name = name,
+                Location = location,
+                StartDate = startDate,
+                EndDate = endDate
+            };
             await _repository.AddAsync(tournament);
             await _repository.SaveChangesAsync();
         }
 
         public async Task RegisterTeamAsync(int tournamentId, string teamName)
         {
-            var team = new Team { Name = teamName };
-            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
-            tournament.Teams.Add(team);
+            var team = new Team
+            {
+                Name = teamName,
+                TournamentId = tournamentId
+            };
+            await _repository.AddAsync(team);
             await _repository.SaveChangesAsync();
         }
 
         public async Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
-            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
-            var teams = tournament.Teams.ToList();
-            var groups = new List<Group>();
-
-            for (int i = 0; i < groupCount; i++)
-            {
-                groups.Add(new Group { Name = $"Group {i + 1}" });
-            }
-
-            for (int i = 0; i < teams.Count; i++)
-            {
-                groups[i % groupCount].Teams.Add(teams[i]);
-            }
-
-            tournament.Groups = groups;
-            await _repository.SaveChangesAsync();
+            // Implement logic to generate groups
+            // This will depend on the number of teams and desired group sizes
         }
 
         public async Task GenerateSpiderAsync(int tournamentId)
         {
-            // Implementation for generating spider
+            // Implement logic to generate a knockout spider
         }
 
         public async Task RecordMatchScoreAsync(int matchId, int scoreA, int scoreB)
         {
             var match = await _repository.GetByIdAsync<Match>(matchId);
-            match.ScoreA = scoreA;
-            match.ScoreB = scoreB;
-            await _repository.SaveChangesAsync();
+            if (match != null)
+            {
+                match.Team1Score = scoreA;
+                match.Team2Score = scoreB;
+                await _repository.UpdateAsync(match);
+                await _repository.SaveChangesAsync();
+            }
         }
     }
 }

@@ -15,5 +15,6 @@ namespace UCL_Tournament_Manager.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ICollection<Group> Groups { get; set; } = new List<Group>();
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
     }
 }

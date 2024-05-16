@@ -54,6 +54,11 @@ namespace UCL_Tournament_Manager.Data
                 .HasMany(g => g.Matches)
                 .WithOne(m => m.Group)
                 .HasForeignKey(m => m.GroupId);
+
+            modelBuilder.Entity<Tournament>()
+                .HasMany(t => t.Teams)
+                .WithOne(t => t.Tournament)
+                .HasForeignKey(t => t.TournamentId);
         }
     }
 }
