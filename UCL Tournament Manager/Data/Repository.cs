@@ -6,44 +6,46 @@ using UCL_Tournament_Manager.Data;
 
 namespace UCL_Tournament_Manager.Data
 {
-    public class Repository<T> : IRepository<T> where T : class
+    using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
+    public class Repository : IRepository
     {
-        protected readonly TournamentContext _context;
-        private DbSet<T> _entities;
+        private readonly TournamentContext _context;
 
         public Repository(TournamentContext context)
         {
             _context = context;
-            _entities = context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task AddAsync<T>(T entity) where T : class
         {
-            return await _entities.ToListAsync();
+            await _context.Set<T>().AddAsync(entity);
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync<T>(int id) where T : class
         {
-            return await _entities.FindAsync(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> CreateAsync(T entity)
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class
         {
-            await _entities.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync<T>(T entity) where T : class
         {
-            _entities.Update(entity);
-            await _context.SaveChangesAsync();
+            _context.Set<T>().Update(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync<T>(T entity) where T : class
         {
-            T entity = await GetByIdAsync(id);
-            _entities.Remove(entity);
+            _context.Set<T>().Remove(entity);
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _context.SaveChangesAsync();
         }
     }

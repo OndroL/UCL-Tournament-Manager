@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace UCL_Tournament_Manager.Data
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task<T> CreateAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
+        Task AddAsync<T>(T entity) where T : class;
+        Task<T> GetByIdAsync<T>(int id) where T : class;
+        Task<IEnumerable<T>> GetAllAsync<T>() where T : class;
+        Task UpdateAsync<T>(T entity) where T : class;
+        Task DeleteAsync<T>(T entity) where T : class;
+        Task SaveChangesAsync();
     }
 }
