@@ -45,13 +45,12 @@ namespace UCL_Tournament_Manager.Services
 
         public async Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
-            // Implement logic to generate groups
-            // This will depend on the number of teams and desired group sizes
+            // Implementation of group generation, no idea how this will work yet
         }
 
         public async Task GenerateSpiderAsync(int tournamentId)
         {
-            // Implement logic to generate a knockout spider
+            // Implement of knockout spider generation, no idea how this will work yet
         }
 
         public async Task RecordMatchScoreAsync(int matchId, int scoreA, int scoreB)
