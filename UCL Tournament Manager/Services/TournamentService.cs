@@ -29,7 +29,6 @@ namespace UCL_Tournament_Manager.Services
                 EndDate = endDate
             };
             await _repository.AddAsync(tournament);
-            await _repository.SaveChangesAsync();
         }
 
         public async Task RegisterTeamAsync(int tournamentId, string teamName)
@@ -40,17 +39,18 @@ namespace UCL_Tournament_Manager.Services
                 TournamentId = tournamentId
             };
             await _repository.AddAsync(team);
-            await _repository.SaveChangesAsync();
         }
 
-        public async Task GenerateGroupsAsync(int tournamentId, int groupCount)
+        public Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
-            // Implementation of group generation, no idea how this will work yet
+            throw new NotImplementedException();
+            // Implement logic to generate groups
         }
 
-        public async Task GenerateSpiderAsync(int tournamentId)
+        public Task GenerateSpiderAsync(int tournamentId)
         {
-            // Implement of knockout spider generation, no idea how this will work yet
+            throw new NotImplementedException();
+            // Implement logic to generate a knockout spider
         }
 
         public async Task RecordMatchScoreAsync(int matchId, int scoreA, int scoreB)
@@ -61,7 +61,6 @@ namespace UCL_Tournament_Manager.Services
                 match.Team1Score = scoreA;
                 match.Team2Score = scoreB;
                 await _repository.UpdateAsync(match);
-                await _repository.SaveChangesAsync();
             }
         }
     }

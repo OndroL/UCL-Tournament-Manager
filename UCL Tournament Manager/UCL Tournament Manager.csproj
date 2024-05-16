@@ -11,9 +11,9 @@
 
   
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Resources\" />
     <Folder Include="Controls\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
   

@@ -1,0 +1,18 @@
+﻿<Window x:Class="UCL_Tournament_Manager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+            <Button Command="{Binding CreateTournamentCommand}" Content="Create Tournament" />
+            <Button Command="{Binding RegisterTeamCommand}" Content="Register Team" />
+            <Button Command="{Binding GenerateGroupsCommand}" Content="Generate Groups" />
+            <Button Command="{Binding GenerateSpiderCommand}" Content="Generate Spider" />
+            <Button Command="{Binding RecordMatchScoreCommand}" Content="Record Match Score" />
+            <ListBox ItemsSource="{Binding Tournaments}" DisplayMemberPath="Name" />
+            <ListBox ItemsSource="{Binding Teams}" DisplayMemberPath="Name" />
+            <ListBox ItemsSource="{Binding Groups}" DisplayMemberPath="GroupName" />
+            <ListBox ItemsSource="{Binding Matches}" DisplayMemberPath="MatchId" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -14,6 +14,7 @@ namespace UCL_Tournament_Manager.Data
         public TournamentContext(DbContextOptions<TournamentContext> options)
             : base(options)
         {
+            Console.WriteLine("TournamentContext created.");
         }
 
         // DbSets for each model
@@ -58,7 +59,8 @@ namespace UCL_Tournament_Manager.Data
             modelBuilder.Entity<Tournament>()
                 .HasMany(t => t.Teams)
                 .WithOne(t => t.Tournament)
-                .HasForeignKey(t => t.TournamentId);
+                .HasForeignKey(t => t.TournamentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

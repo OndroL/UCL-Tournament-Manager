@@ -11,14 +11,14 @@ namespace UCL_Tournament_Manager.Models
     {
         public int MatchId { get; set; }
         public int Team1Id { get; set; }
-        public Team Team1 { get; set; }   // Navigation property
+        public required Team Team1 { get; set; }   // Navigation property
         public int Team2Id { get; set; }
-        public Team Team2 { get; set; }   // Navigation property
+        public required Team Team2 { get; set; }   // Navigation property
         public int Team1Score { get; set; }
         public int Team2Score { get; set; }
         public int? GroupId { get; set; }  // Foreign key to Group (nullable if knockout)
         public Group? Group { get; set; }   // Navigation property (nullable)
         public int? TournamentId { get; set; }  // Foreign key to Tournament
-        public Tournament Tournament { get; set; }   // Navigation property
+        public required Tournament Tournament { get; set; }   // Navigation property
     }
 }

@@ -12,7 +12,7 @@ using UCL_Tournament_Manager.Data;
 namespace UCL_Tournament_Manager.Migrations
 {
     [DbContext(typeof(TournamentContext))]
-    [Migration("20240507031935_InitialMigration")]
+    [Migration("20240516032553_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace UCL_Tournament_Manager.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -131,9 +131,14 @@ namespace UCL_Tournament_Manager.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
                     b.HasKey("TeamId");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("TournamentId");
 
                     b.ToTable("Teams");
                 });
@@ -226,7 +231,15 @@ namespace UCL_Tournament_Manager.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
+                        .WithMany("Teams")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Group");
+
+                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("UCL_Tournament_Manager.Models.Group", b =>
@@ -244,6 +257,8 @@ namespace UCL_Tournament_Manager.Migrations
             modelBuilder.Entity("UCL_Tournament_Manager.Models.Tournament", b =>
                 {
                     b.Navigation("Groups");
+
+                    b.Navigation("Teams");
                 });
 #pragma warning restore 612, 618
         }

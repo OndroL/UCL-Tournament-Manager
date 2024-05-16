@@ -1,41 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Configuration;
-using System.Data;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Windows;
 using UCL_Tournament_Manager.Data;
-using UCL_Tournament_Manager.Helpers;
+using UCL_Tournament_Manager.Services;
+using UCL_Tournament_Manager.ViewModels;
+using UCL_Tournament_Manager.Views;
 
 namespace UCL_Tournament_Manager
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        private void OnStartup(object sender, StartupEventArgs e)
+        public IServiceProvider ServiceProvider { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<TournamentContext>();
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=UCL_Tournament;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;");
-            using (var context = new TournamentContext(optionsBuilder.Options))
+            base.OnStartup(e);
+
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+
+            // Migrate the database
+            try
             {
-                try
+                using (var scope = ServiceProvider.CreateScope())
                 {
+                    var context = scope.ServiceProvider.GetRequiredService<TournamentContext>();
                     context.Database.Migrate();
                 }
-                catch (Exception ex)
-                {
-                    // Log the error or notify the user
-                    MessageBox.Show($"An error occurred while setting up the database: {ex.Message}");
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while setting up the database: {ex.Message}");
             }
 
-            // Initialize the main window
-            MainWindow mainWindow = new MainWindow();
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
+        }
 
-            // Create and test database connection
-            DatabaseHelper dbHelper = new DatabaseHelper();
-            dbHelper.TestDatabaseConnection();
+        private void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<TournamentContext>(options =>
+                options.UseSqlServer("Server=localhost,1433;Database=UCL_Tournament;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;"),
+                ServiceLifetime.Scoped);
+            
+            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<TournamentService>();
+            services.AddScoped<MainWindowViewModel>();
+
+            services.AddTransient<MainWindow>();
         }
     }
 }
