@@ -1,0 +1,16 @@
+﻿<Window x:Class="UCL_Tournament_Manager.Views.AddScoreWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Score" Height="300" Width="400">
+    <Grid>
+        <StackPanel>
+            <ComboBox ItemsSource="{Binding Matches}" DisplayMemberPath="MatchId" SelectedItem="{Binding SelectedMatch}" />
+            <TextBlock Text="{Binding SelectedMatch.Team1.Name}" />
+            <TextBox Text="{Binding Team1Score, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding SelectedMatch.Team2.Name}" />
+            <TextBox Text="{Binding Team2Score, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Command="{Binding SaveScoreCommand}" Content="Save Score" />
+            <Button Command="{Binding NavigateBackCommand}" Content="Back" />
+        </StackPanel>
+    </Grid>
+</Window>

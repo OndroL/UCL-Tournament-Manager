@@ -12,6 +12,7 @@
             <Button Command="{Binding NavigateToCreateTournamentCommand}" Content="Create Tournament" />
             <Button Command="{Binding NavigateToCreateTeamCommand}" Content="Create Team" />
             <Button Command="{Binding NavigateToGenerateBracketCommand}" Content="Generate Bracket" />
+            <Button Command="{Binding NavigateToAddScoreCommand}" Content="Add Score" />
             <ListBox ItemsSource="{Binding Tournaments}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

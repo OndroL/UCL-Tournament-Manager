@@ -51,11 +51,14 @@ namespace UCL_Tournament_Manager
             services.AddScoped<CreateTournamentViewModel>();
             services.AddScoped<CreateTeamViewModel>();
             services.AddScoped<GenerateBracketViewModel>();
+            services.AddScoped<AddScoreViewModel>();
 
             services.AddTransient<MainWindow>();
             services.AddTransient<CreateTournamentWindow>();
             services.AddTransient<CreateTeamWindow>();
             services.AddTransient<GenerateBracketWindow>();
+            services.AddScoped<AddScoreWindow>();
         }
+
     }
 }

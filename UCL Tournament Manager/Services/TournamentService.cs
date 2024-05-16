@@ -72,7 +72,7 @@ namespace UCL_Tournament_Manager.Services
             {
                 throw new Exception("Tournament not found");
             }
-            if (tournament.Teams.Count > 0)
+            if (tournament.Teams != null && tournament.Teams.Count > 0)
             {
                 throw new Exception($"Tournament has already generated Bracket ${tournament.Teams.Count}");
             }
@@ -164,6 +164,10 @@ namespace UCL_Tournament_Manager.Services
         {
             var matches = await _repository.GetAllAsync<Match>();
             return matches.Where(m => m.TournamentId == tournamentId).ToList();
+        }
+        public async Task<IEnumerable<Match>> GetAllMatchesAsync()
+        {
+            return await _repository.GetAllAsync<Match>();
         }
     }
 }
