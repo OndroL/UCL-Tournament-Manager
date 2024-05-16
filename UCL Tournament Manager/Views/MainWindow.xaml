@@ -3,16 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel>
-            <Button Command="{Binding CreateTournamentCommand}" Content="Create Tournament" />
-            <Button Command="{Binding RegisterTeamCommand}" Content="Register Team" />
-            <Button Command="{Binding GenerateGroupsCommand}" Content="Generate Groups" />
-            <Button Command="{Binding GenerateSpiderCommand}" Content="Generate Spider" />
-            <Button Command="{Binding RecordMatchScoreCommand}" Content="Record Match Score" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <Button Command="{Binding NavigateToCreateTournamentCommand}" Content="Create Tournament" />
             <ListBox ItemsSource="{Binding Tournaments}" DisplayMemberPath="Name" />
-            <ListBox ItemsSource="{Binding Teams}" DisplayMemberPath="Name" />
-            <ListBox ItemsSource="{Binding Groups}" DisplayMemberPath="GroupName" />
-            <ListBox ItemsSource="{Binding Matches}" DisplayMemberPath="MatchId" />
         </StackPanel>
     </Grid>
 </Window>

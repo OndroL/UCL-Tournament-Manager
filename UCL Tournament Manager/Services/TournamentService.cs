@@ -29,6 +29,7 @@ namespace UCL_Tournament_Manager.Services
                 EndDate = endDate
             };
             await _repository.AddAsync(tournament);
+            await _repository.SaveChangesAsync();
         }
 
         public async Task RegisterTeamAsync(int tournamentId, string teamName)
@@ -39,7 +40,9 @@ namespace UCL_Tournament_Manager.Services
                 TournamentId = tournamentId
             };
             await _repository.AddAsync(team);
+            await _repository.SaveChangesAsync();
         }
+
 
         public Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
