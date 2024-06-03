@@ -14,7 +14,9 @@ namespace UCL_Tournament_Manager.ViewModels
     {
         private readonly TournamentService _tournamentService;
         private readonly System.Timers.Timer _timer;
-        private object _currentView;
+        private object? _currentView ;
+
+        private bool _isMainViewVisible;
 
         public ObservableCollection<Tournament> Tournaments { get; set; }
         public ICommand NavigateToCreateTournamentCommand { get; }
@@ -22,10 +24,20 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateToGenerateBracketCommand { get; }
         public ICommand NavigateToAddScoreCommand { get; }
 
-        public object CurrentView
+        public object? CurrentView
         {
             get => _currentView;
-            set => SetProperty(ref _currentView, value);
+            set
+            {
+                SetProperty(ref _currentView, value);
+                IsMainViewVisible = value == null;
+            }
+        }
+
+        public bool IsMainViewVisible
+        {
+            get => _isMainViewVisible;
+            set => SetProperty(ref _isMainViewVisible, value);
         }
 
         public MainWindowViewModel(TournamentService tournamentService)
@@ -43,6 +55,8 @@ namespace UCL_Tournament_Manager.ViewModels
             _timer.Elapsed += TimerElapsed;
             _timer.AutoReset = true;
             _timer.Enabled = true;
+
+            CurrentView = null;
 
             LoadData();
         }
@@ -74,28 +88,28 @@ namespace UCL_Tournament_Manager.ViewModels
         private void NavigateToCreateTournamentView()
         {
             var createTournamentViewModel = new CreateTournamentViewModel(_tournamentService);
-            createTournamentViewModel.NavigateBack = () => CurrentView = this;
+            createTournamentViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new CreateTournamentView { DataContext = createTournamentViewModel };
         }
 
         private void NavigateToCreateTeamView()
         {
             var createTeamViewModel = new CreateTeamViewModel(_tournamentService);
-            createTeamViewModel.NavigateBack = () => CurrentView = this;
+            createTeamViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new CreateTeamView { DataContext = createTeamViewModel };
         }
 
         private void NavigateToGenerateBracketView()
         {
             var generateBracketViewModel = new GenerateBracketViewModel(_tournamentService);
-            generateBracketViewModel.NavigateBack = () => CurrentView = this;
+            generateBracketViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new GenerateBracketView { DataContext = generateBracketViewModel };
         }
 
         private void NavigateToAddScoreView()
         {
             var addScoreViewModel = new AddScoreViewModel(_tournamentService);
-            addScoreViewModel.NavigateBack = () => CurrentView = this;
+            addScoreViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new AddScoreView { DataContext = addScoreViewModel };
         }
     }

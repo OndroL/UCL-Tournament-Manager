@@ -13,9 +13,9 @@ namespace UCL_Tournament_Manager.ViewModels
 
         public ObservableCollection<Team> Teams { get; set; }
 
-        private string _teamName;
+        private string? _teamName;
 
-        public string TeamName
+        public string? TeamName
         {
             get => _teamName;
             set => SetProperty(ref _teamName, value);
@@ -48,8 +48,11 @@ namespace UCL_Tournament_Manager.ViewModels
 
         private async Task CreateTeamAsync()
         {
-            await _tournamentService.CreateTeamAsync(TeamName);
-            LoadData();
+            if (TeamName != null)
+            {
+                await _tournamentService.CreateTeamAsync(TeamName);
+                LoadData();
+            }
         }
     }
 }

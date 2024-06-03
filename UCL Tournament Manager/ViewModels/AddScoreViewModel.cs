@@ -12,6 +12,7 @@ namespace UCL_Tournament_Manager.ViewModels
     {
         private readonly TournamentService _tournamentService;
         private Match _selectedMatch;
+        public ObservableCollection<Team> Teams { get; set; }
         private int _team1Score;
         private int _team2Score;
 
@@ -50,6 +51,7 @@ namespace UCL_Tournament_Manager.ViewModels
         {
             _tournamentService = tournamentService;
             Matches = new ObservableCollection<Match>();
+            Teams = new ObservableCollection<Team>();
 
             SaveScoreCommand = new RelayCommand(async () => await SaveScoreAsync());
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
@@ -59,6 +61,13 @@ namespace UCL_Tournament_Manager.ViewModels
 
         private async void LoadMatches()
         {
+            var teams = await _tournamentService.GetTeamsAsync();
+            Teams.Clear();
+            foreach (var team in teams)
+            {
+                Teams.Add(team);
+            }
+
             var matches = await _tournamentService.GetAllMatchesAsync();
             Matches.Clear();
             foreach (var match in matches)
