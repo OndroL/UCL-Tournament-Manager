@@ -1,14 +1,12 @@
-﻿<Window x:Class="UCL_Tournament_Manager.Views.CreateTournamentWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Create Tournament" Height="450" Width="800">
+﻿<UserControl x:Class="UCL_Tournament_Manager.Views.CreateTournamentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel>
         <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}"/>
         <DatePicker SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" />
         <DatePicker SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}" />
         <Button Command="{Binding CreateTournamentCommand}" Content="Create Tournament" />
-        <Button Command="{Binding NavigateBackCommand}" Content="Back to Main" />
-        <ListBox ItemsSource="{Binding Tournaments}" DisplayMemberPath="Name" />
+        <Button Command="{Binding NavigateBackCommand}" Content="Back" />
     </StackPanel>
-</Window>
+</UserControl>

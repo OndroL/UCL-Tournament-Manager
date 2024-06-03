@@ -12,7 +12,14 @@ namespace UCL_Tournament_Manager.ViewModels
         private readonly TournamentService _tournamentService;
 
         public ObservableCollection<Team> Teams { get; set; }
-        public string TeamName { get; set; }
+
+        private string _teamName;
+
+        public string TeamName
+        {
+            get => _teamName;
+            set => SetProperty(ref _teamName, value);
+        }
         public ICommand CreateTeamCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
@@ -20,7 +27,6 @@ namespace UCL_Tournament_Manager.ViewModels
 
         public CreateTeamViewModel(TournamentService tournamentService)
         {
-            TeamName = "Enter Name of Team";
             _tournamentService = tournamentService;
             Teams = new ObservableCollection<Team>();
 
