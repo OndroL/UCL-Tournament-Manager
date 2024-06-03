@@ -19,7 +19,14 @@ namespace UCL_Tournament_Manager.ViewModels
         public Match SelectedMatch
         {
             get => _selectedMatch;
-            set => SetProperty(ref _selectedMatch, value);
+            set
+            {
+                if (SetProperty(ref _selectedMatch, value))
+                {
+                    Team1Score = value?.Team1Score ?? 0;
+                    Team2Score = value?.Team2Score ?? 0;
+                }
+            }
         }
 
         public int Team1Score

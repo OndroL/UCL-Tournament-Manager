@@ -16,7 +16,6 @@ namespace UCL_Tournament_Manager.Helpers
 
         public DatabaseHelper()
         {
-            // Update this with your actual connection string
             connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         }
 

@@ -41,6 +41,7 @@ namespace UCL_Tournament_Manager
 
         private void ConfigureServices(IServiceCollection services)
         {
+            // Conection to Database
             services.AddDbContext<TournamentContext>(options =>
                 options.UseSqlServer("Server=localhost,1433;Database=UCL_Tournament;User Id=sa;Password=YourStrong!Passw0rd;Encrypt=False;"),
                 ServiceLifetime.Scoped);

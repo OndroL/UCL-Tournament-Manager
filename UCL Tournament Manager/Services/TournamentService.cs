@@ -67,7 +67,6 @@ namespace UCL_Tournament_Manager.Services
         {
             var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
 
-           
             if (tournament == null)
             {
                 throw new Exception("Tournament not found");
