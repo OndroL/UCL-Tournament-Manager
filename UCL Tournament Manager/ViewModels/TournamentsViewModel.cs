@@ -18,6 +18,7 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateToCreateTournamentCommand { get; }
         public ICommand NavigateToEditTournamentCommand { get; }
         public ICommand NavigateBackCommand { get; }
+        public ICommand NavigateToRegisterTeamForTournamentCommand { get; }
 
         public Action? NavigateBack { get; set; }
 
@@ -27,6 +28,7 @@ namespace UCL_Tournament_Manager.ViewModels
 
             NavigateToCreateTournamentCommand = new RelayCommand(NavigateToCreateTournament);
             NavigateToEditTournamentCommand = new RelayCommand(NavigateToEditTournament);
+            NavigateToRegisterTeamForTournamentCommand = new RelayCommand(NavigateToRegisterTeamForTournament);
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
         }
 
@@ -42,6 +44,12 @@ namespace UCL_Tournament_Manager.ViewModels
             var editTournamentViewModel = new EditTournamentViewModel(_tournamentService);
             editTournamentViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new EditTournamentView { DataContext = editTournamentViewModel };
+        }
+        private void NavigateToRegisterTeamForTournament()
+        {
+            var registerTeamForTournamentViewModel = new RegisterTeamForTournamentViewModel(_tournamentService);
+            registerTeamForTournamentViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new RegisterTeamForTournamentView { DataContext = registerTeamForTournamentViewModel };
         }
     }
 }

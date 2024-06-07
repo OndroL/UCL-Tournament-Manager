@@ -9,6 +9,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
             <Button Command="{Binding NavigateToCreateTeamCommand}" Content="Create Team" Margin="5"/>
             <Button Command="{Binding NavigateToEditTeamCommand}" Content="Edit Team" Margin="5"/>
+            <Button Command="{Binding NavigateToAddPlayerCommand}" Content="Add Player" Margin="5"/>
         </StackPanel>
 
         <ContentControl Content="{Binding CurrentView}" Margin="10"/>

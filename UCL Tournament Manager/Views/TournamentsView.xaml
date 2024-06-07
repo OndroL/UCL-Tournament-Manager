@@ -6,6 +6,7 @@
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
             <Button Command="{Binding NavigateToCreateTournamentCommand}" Content="Create Tournament" Margin="5"/>
             <Button Command="{Binding NavigateToEditTournamentCommand}" Content="Edit Tournament" Margin="5"/>
+            <Button Command="{Binding NavigateToRegisterTeamForTournamentCommand}" Content="Register Team" Margin="5"/>
         </StackPanel>
         <ContentControl Content="{Binding CurrentView}" Margin="10"/>
         <Button Command="{Binding NavigateBackCommand}" Content="Back to Main Menu" HorizontalAlignment="Center" Margin="10"/>

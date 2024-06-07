@@ -97,6 +97,23 @@ namespace UCL_Tournament_Manager.Services
             await _repository.DeleteAsync(team);
         }
 
+        public async Task RegisterTeamAsync(int tournamentId, int teamId)
+        {
+            var team = await _repository.GetByIdAsync<Team>(teamId);
+            if (team != null)
+            {
+                team.TournamentId = tournamentId;
+                await _repository.UpdateAsync(team);
+                await _repository.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddPlayerAsync(Player player)
+        {
+            await _repository.AddAsync(player);
+            await _repository.SaveChangesAsync();
+        }
+
 
         public Task GenerateGroupsAsync(int tournamentId, int groupCount)
         {
