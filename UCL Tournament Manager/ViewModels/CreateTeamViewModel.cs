@@ -39,6 +39,7 @@ namespace UCL_Tournament_Manager.ViewModels
             if (TeamName != null)
             {
                 await _tournamentService.CreateTeamAsync(TeamName);
+                NavigateBack?.Invoke();
             }
         }
     }
