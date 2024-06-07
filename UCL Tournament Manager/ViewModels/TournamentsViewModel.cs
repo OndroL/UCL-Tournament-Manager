@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using UCL_Tournament_Manager.Services;
 using UCL_Tournament_Manager.Views;
 
@@ -8,9 +7,9 @@ namespace UCL_Tournament_Manager.ViewModels
     public class TournamentsViewModel : BaseViewModel
     {
         private readonly TournamentService _tournamentService;
-        private object _currentView;
+        private object? _currentView;
 
-        public object CurrentView
+        public object? CurrentView
         {
             get => _currentView;
             set => SetProperty(ref _currentView, value);
@@ -20,7 +19,7 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateToEditTournamentCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
-        public Action NavigateBack { get; set; }
+        public Action? NavigateBack { get; set; }
 
         public TournamentsViewModel(TournamentService tournamentService)
         {
@@ -29,8 +28,6 @@ namespace UCL_Tournament_Manager.ViewModels
             NavigateToCreateTournamentCommand = new RelayCommand(NavigateToCreateTournament);
             NavigateToEditTournamentCommand = new RelayCommand(NavigateToEditTournament);
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
-
-            NavigateToCreateTournament();
         }
 
         private void NavigateToCreateTournament()

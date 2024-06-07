@@ -62,7 +62,7 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand SaveScoreCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
-        public Action NavigateBack { get; set; }
+        public Action? NavigateBack { get; set; }
 
         public AddScoreViewModel(TournamentService tournamentService)
         {

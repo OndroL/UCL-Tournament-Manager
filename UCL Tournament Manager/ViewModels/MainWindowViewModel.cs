@@ -13,14 +13,14 @@ namespace UCL_Tournament_Manager.ViewModels
     public class MainWindowViewModel : BaseViewModel
     {
         private readonly TournamentService _tournamentService;
-        private readonly System.Timers.Timer _timer;
+        private readonly System.Timers.Timer? _timer;
         private object? _currentView ;
 
         private bool _isMainViewVisible;
 
         public ObservableCollection<Tournament> Tournaments { get; set; }
         public ICommand NavigateToTournamentsCommand { get; }
-        public ICommand NavigateToCreateTeamCommand { get; }
+        public ICommand NavigateToTeamsCommand { get; }
         public ICommand NavigateToGenerateBracketCommand { get; }
         public ICommand NavigateToAddScoreCommand { get; }
 
@@ -46,7 +46,7 @@ namespace UCL_Tournament_Manager.ViewModels
             Tournaments = new ObservableCollection<Tournament>();
 
             NavigateToTournamentsCommand = new RelayCommand(NavigateToTournamentsView);
-            NavigateToCreateTeamCommand = new RelayCommand(NavigateToCreateTeamView);
+            NavigateToTeamsCommand = new RelayCommand(NavigateToTeamsView);
             NavigateToGenerateBracketCommand = new RelayCommand(NavigateToGenerateBracketView);
             NavigateToAddScoreCommand = new RelayCommand(NavigateToAddScoreView);
 
@@ -61,7 +61,7 @@ namespace UCL_Tournament_Manager.ViewModels
             LoadData();
         }
 
-        private async void TimerElapsed(object sender, ElapsedEventArgs e)
+        private async void TimerElapsed(object? sender, ElapsedEventArgs e)
         {
             await LoadDataAsync();
         }
@@ -92,11 +92,11 @@ namespace UCL_Tournament_Manager.ViewModels
             CurrentView = new TournamentsView { DataContext = tournamentsViewModel };
         }
 
-        private void NavigateToCreateTeamView()
+        private void NavigateToTeamsView()
         {
-            var createTeamViewModel = new CreateTeamViewModel(_tournamentService);
-            createTeamViewModel.NavigateBack = () => CurrentView = null;
-            CurrentView = new CreateTeamView { DataContext = createTeamViewModel };
+            var teamsViewModel = new TeamsViewModel(_tournamentService);
+            teamsViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new TeamsView { DataContext = teamsViewModel };
         }
 
         private void NavigateToGenerateBracketView()

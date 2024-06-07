@@ -38,7 +38,7 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateBackCommand { get; }
         public ICommand DeleteTournamentCommand { get; }
 
-        public Action NavigateBack { get; set; }
+        public Action? NavigateBack { get; set; }
 
         public EditTournamentViewModel(TournamentService tournamentService)
         {

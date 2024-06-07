@@ -10,8 +10,8 @@ namespace UCL_Tournament_Manager.ViewModels
         private readonly TournamentService _tournamentService;
 
         public ObservableCollection<Tournament> Tournaments { get; set; }
-        public string? Name { get; set; }
-        public string? Location { get; set; }
+        public string Name { get; set; }
+        public string Location { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ICommand? CreateTournamentCommand { get; }

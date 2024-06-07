@@ -10,10 +10,10 @@
     </Window.Resources>
     <DockPanel>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="10">
-            <Button Command="{Binding NavigateToTournamentsCommand}" Content="Tournaments" Margin="5"/>
-            <Button Command="{Binding NavigateToCreateTeamCommand}" Content="Create Team" Margin="5"/>
-            <Button Command="{Binding NavigateToGenerateBracketCommand}" Content="Generate Bracket" Margin="5"/>
-            <Button Command="{Binding NavigateToAddScoreCommand}" Content="Add Score" Margin="5"/>
+            <Button Command="{Binding NavigateToTournamentsCommand}" Content="Tournaments" Margin="5" Background="LightBlue"/>
+            <Button Command="{Binding NavigateToTeamsCommand}" Content="Teams" Margin="5" Background="LightBlue"/>
+            <Button Command="{Binding NavigateToGenerateBracketCommand}" Content="Generate Bracket" Margin="5" Background="LightBlue"/>
+            <Button Command="{Binding NavigateToAddScoreCommand}" Content="Add Score" Margin="5" Background="LightBlue"/>
         </StackPanel>
 
         <Grid Visibility="{Binding IsMainViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}">

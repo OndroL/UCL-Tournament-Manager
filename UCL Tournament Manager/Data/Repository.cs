@@ -25,7 +25,7 @@ namespace UCL_Tournament_Manager.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task<T?> GetByIdAsync<T>(int id) where T : class
+        public async Task<T> GetByIdAsync<T>(int id) where T : class
         {
             Console.WriteLine("GetByIdAsync called.");
             return await _context.Set<T>().FindAsync(id);

@@ -32,18 +32,6 @@ namespace UCL_Tournament_Manager.ViewModels
 
             CreateTeamCommand = new RelayCommand(async () => await CreateTeamAsync());
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
-
-            LoadData();
-        }
-
-        private async void LoadData()
-        {
-            var teams = await _tournamentService.GetTeamsAsync();
-            Teams.Clear();
-            foreach (var team in teams)
-            {
-                Teams.Add(team);
-            }
         }
 
         private async Task CreateTeamAsync()
@@ -51,7 +39,6 @@ namespace UCL_Tournament_Manager.ViewModels
             if (TeamName != null)
             {
                 await _tournamentService.CreateTeamAsync(TeamName);
-                LoadData();
             }
         }
     }
