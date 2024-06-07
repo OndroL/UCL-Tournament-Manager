@@ -11,12 +11,26 @@ namespace UCL_Tournament_Manager.ViewModels
     public class AddScoreViewModel : BaseViewModel
     {
         private readonly TournamentService _tournamentService;
-        private Match _selectedMatch;
         public ObservableCollection<Team> Teams { get; set; }
+        public ObservableCollection<Match> Matches { get; set; }
         private int _team1Score;
         private int _team2Score;
+        private Match _selectedMatch;
+        private bool _isMatchSelected;
+        private string _matchState;
 
-        public ObservableCollection<Match> Matches { get; set; }
+        public bool IsMatchSelected
+        {
+            get => _isMatchSelected;
+            set => SetProperty(ref _isMatchSelected, value);
+        }
+
+        public string MatchState
+        {
+            get => _matchState;
+            set => SetProperty(ref _matchState, value);
+        }
+
         public Match SelectedMatch
         {
             get => _selectedMatch;
@@ -24,8 +38,11 @@ namespace UCL_Tournament_Manager.ViewModels
             {
                 if (SetProperty(ref _selectedMatch, value))
                 {
+                    IsMatchSelected = value != null;
+                    OnPropertyChanged(nameof(IsMatchSelected));
                     Team1Score = value?.Team1Score ?? 0;
                     Team2Score = value?.Team2Score ?? 0;
+                    MatchState = value?.IsTeam1Winner.HasValue == true ? "Finished" : "Not played";
                 }
             }
         }
