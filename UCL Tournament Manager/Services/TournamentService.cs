@@ -114,78 +114,6 @@ namespace UCL_Tournament_Manager.Services
             await _repository.SaveChangesAsync();
         }
 
-
-        public Task GenerateGroupsAsync(int tournamentId, int groupCount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task GenerateBracketAsync(int tournamentId)
-        {
-            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
-
-            if (tournament == null)
-            {
-                throw new Exception("Tournament not found");
-            }
-            if (tournament.Teams != null && tournament.Teams.Count > 0)
-            {
-                throw new Exception($"Tournament has already generated Bracket ${tournament.Teams.Count}");
-            }
-
-            var teams = await _repository.GetAllAsync<Team>();
-            var teamsList = teams.ToList();
-
-            if (teamsList.Count < 4)
-            {
-                throw new Exception("There must be at least 4 teams to generate the bracket");
-            }
-
-            var random = new Random();
-            var selectedTeams = teamsList.OrderBy(t => random.Next()).Take(4).ToList();
-            tournament.Teams = selectedTeams;
-
-            var match1 = new Match
-            {
-                TournamentId = tournamentId,
-                Tournament = tournament,
-                Team1 = selectedTeams[0],
-                Team1Id = selectedTeams[0].TeamId,
-                Team2 = selectedTeams[1],
-                Team2Id = selectedTeams[1].TeamId
-            };
-
-            var match2 = new Match
-            {
-                TournamentId = tournamentId,
-                Tournament = tournament,
-                Team1 = selectedTeams[2],
-                Team1Id = selectedTeams[2].TeamId,
-                Team2 = selectedTeams[3],
-                Team2Id = selectedTeams[3].TeamId
-            };
-
-            await _repository.AddAsync(match1);
-            await _repository.AddAsync(match2);
-            await _repository.SaveChangesAsync();
-
-            var finalMatch = new Match
-            {
-                TournamentId = tournamentId,
-                Tournament = tournament
-            };
-
-            await _repository.AddAsync(finalMatch);
-            await _repository.SaveChangesAsync();
-
-            match1.NextMatchId = finalMatch.MatchId;
-            match2.NextMatchId = finalMatch.MatchId;
-
-            await _repository.UpdateAsync(match1);
-            await _repository.UpdateAsync(match2);
-            await _repository.SaveChangesAsync();
-        }
-
         public async Task RecordMatchScoreAsync(int matchId, int scoreA, int scoreB)
         {
             var match = await _repository.GetByIdAsync<Match>(matchId);
@@ -216,14 +144,133 @@ namespace UCL_Tournament_Manager.Services
                 await _repository.SaveChangesAsync();
             }
         }
+
         public async Task<IEnumerable<Match>> GetMatchesByTournamentIdAsync(int tournamentId)
         {
             var matches = await _repository.GetAllAsync<Match>();
             return matches.Where(m => m.TournamentId == tournamentId).ToList();
         }
+
         public async Task<IEnumerable<Match>> GetAllMatchesAsync()
         {
             return await _repository.GetAllAsync<Match>();
+        }
+
+        public async Task<IEnumerable<Player>> GetPlayersByTeamIdAsync(int teamId)
+        {
+            var players = await _repository.GetAllAsync<Player>();
+            return players.Where(p => p.TeamId == teamId);
+        }
+
+        public async Task UpdatePlayerAsync(Player player)
+        {
+            await _repository.UpdateAsync(player);
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task DeletePlayerAsync(int playerId)
+        {
+            var player = await _repository.GetByIdAsync<Player>(playerId);
+            if (player != null)
+            {
+                await _repository.DeleteAsync(player);
+                await _repository.SaveChangesAsync();
+            }
+        }
+
+        public async Task GenerateBracketAsync(int tournamentId, int selectedNumberOfTeams)
+        {
+            if (selectedNumberOfTeams != 4 && selectedNumberOfTeams != 8 && selectedNumberOfTeams != 16)
+            {
+                throw new ArgumentException("Number of teams must be 4, 8, or 16.");
+            }
+
+            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
+
+            if (tournament == null)
+            {
+                throw new Exception("Tournament not found");
+            }
+            if (tournament.Teams != null && tournament.Teams.Count > 0)
+            {
+                throw new Exception($"Tournament has already generated Bracket {tournament.Teams.Count}");
+            }
+
+            var teams = await _repository.GetAllAsync<Team>();
+            var teamsList = teams.ToList();
+
+            if (teamsList.Count < selectedNumberOfTeams)
+            {
+                throw new Exception($"There must be at least {selectedNumberOfTeams} teams to generate the bracket");
+            }
+
+            var random = new Random();
+            var selectedTeams = teamsList.OrderBy(t => random.Next()).Take(selectedNumberOfTeams).ToList();
+            tournament.Teams = selectedTeams;
+
+            await GenerateMatchesAsync(tournament, selectedTeams, selectedNumberOfTeams);
+        }
+
+        private async Task GenerateMatchesAsync(Tournament tournament, List<Team> selectedTeams, int teamCount)
+        {
+            var matches = new List<Match>();
+            int matchCount = teamCount / 2;
+
+            for (int i = 0; i < matchCount; i++)
+            {
+                var match = new Match
+                {
+                    TournamentId = tournament.TournamentId,
+                    Tournament = tournament,
+                    Team1 = selectedTeams[i * 2],
+                    Team1Id = selectedTeams[i * 2].TeamId,
+                    Team2 = selectedTeams[i * 2 + 1],
+                    Team2Id = selectedTeams[i * 2 + 1].TeamId
+                };
+                matches.Add(match);
+            }
+
+            foreach (var match in matches)
+            {
+                await _repository.AddAsync(match);
+            }
+
+            await _repository.SaveChangesAsync();
+
+            var nextRoundMatches = await CreateNextRoundMatchesAsync(tournament, matches, matchCount);
+
+            while (nextRoundMatches.Count > 1)
+            {
+                nextRoundMatches = await CreateNextRoundMatchesAsync(tournament, nextRoundMatches, nextRoundMatches.Count);
+            }
+        }
+
+        private async Task<List<Match>> CreateNextRoundMatchesAsync(Tournament tournament, List<Match> currentRoundMatches, int matchCount)
+        {
+            var nextRoundMatches = new List<Match>();
+
+            for (int i = 0; i < matchCount / 2; i++)
+            {
+                var nextMatch = new Match
+                {
+                    TournamentId = tournament.TournamentId,
+                    Tournament = tournament
+                };
+
+                nextRoundMatches.Add(nextMatch);
+                await _repository.AddAsync(nextMatch);
+                await _repository.SaveChangesAsync();
+
+                currentRoundMatches[i * 2].NextMatchId = nextMatch.MatchId;
+                currentRoundMatches[i * 2 + 1].NextMatchId = nextMatch.MatchId;
+
+                await _repository.UpdateAsync(currentRoundMatches[i * 2]);
+                await _repository.UpdateAsync(currentRoundMatches[i * 2 + 1]);
+            }
+
+            await _repository.SaveChangesAsync();
+
+            return nextRoundMatches;
         }
     }
 }

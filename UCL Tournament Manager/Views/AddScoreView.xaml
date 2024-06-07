@@ -24,10 +24,16 @@
         <StackPanel Visibility="{Binding IsMatchSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
 			<TextBlock Text="Match State: " FontWeight="Bold"/>
 			<TextBlock Text="{Binding MatchState}" Margin="5"/>
-            <TextBlock Text="{Binding SelectedMatch.Team1.Name}" />
-            <TextBox Text="{Binding Team1Score, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{Binding SelectedMatch.Team2.Name}" />
-            <TextBox Text="{Binding Team2Score, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Margin="5">
+                <Run Text="Team: " />
+                <Run Text="{Binding SelectedMatch.Team1.Name}" />
+            </TextBlock>
+            <TextBox Text="{Binding Team1Score, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+            <TextBlock Margin="5">
+                <Run Text="Team: " />
+                <Run Text="{Binding SelectedMatch.Team2.Name}" />
+            </TextBlock>
+            <TextBox Text="{Binding Team2Score, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
             <Button Command="{Binding SaveScoreCommand}" Content="Save Score" />
         </StackPanel>
         <Button Command="{Binding NavigateBackCommand}" Content="Back" />

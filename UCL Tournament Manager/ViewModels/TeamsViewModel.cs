@@ -27,6 +27,8 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateToCreateTeamCommand { get; }
         public ICommand NavigateToEditTeamCommand { get; }
         public ICommand NavigateToAddPlayerCommand { get; }
+        public ICommand NavigateToShowPlayersCommand { get; }
+        public ICommand NavigateToEditPlayerCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
         public Action? NavigateBack { get; set; }
@@ -38,6 +40,8 @@ namespace UCL_Tournament_Manager.ViewModels
             NavigateToCreateTeamCommand = new RelayCommand(NavigateToCreateTeam);
             NavigateToEditTeamCommand = new RelayCommand(NavigateToEditTeam);
             NavigateToAddPlayerCommand = new RelayCommand(NavigateToAddPlayer);
+            NavigateToShowPlayersCommand = new RelayCommand(NavigateToShowPlayers);
+            NavigateToEditPlayerCommand = new RelayCommand(NavigateToEditPlayer);
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
 
             Teams = new ObservableCollection<Team>();
@@ -75,5 +79,19 @@ namespace UCL_Tournament_Manager.ViewModels
             addPlayerViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new AddPlayerView { DataContext = addPlayerViewModel };
         }
+        private void NavigateToShowPlayers()
+        {
+            var showPlayersViewModel = new ShowPlayersViewModel(_tournamentService);
+            showPlayersViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new ShowPlayersView { DataContext = showPlayersViewModel };
+        }
+
+        private void NavigateToEditPlayer()
+        {
+            var editPlayerViewModel = new EditPlayerViewModel(_tournamentService);
+            editPlayerViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new EditPlayerView { DataContext = editPlayerViewModel };
+        }
+
     }
 }

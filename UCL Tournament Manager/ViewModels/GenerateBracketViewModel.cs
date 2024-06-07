@@ -9,9 +9,25 @@ namespace UCL_Tournament_Manager.ViewModels
     public class GenerateBracketViewModel : BaseViewModel
     {
         private readonly TournamentService _tournamentService;
+        private Tournament _selectedTournament;
+        private int _selectedNumberOfTeams;
+        private readonly List<int> _teamCounts = new List<int> { 4, 8, 16 };
 
-        public int TournamentId { get; set; }
-        public ObservableCollection<Models.Match> Matches { get; set; }
+        public ObservableCollection<Tournament> Tournaments { get; set; }
+        public Tournament SelectedTournament
+        {
+            get => _selectedTournament;
+            set => SetProperty(ref _selectedTournament, value);
+        }
+
+        public int SelectedNumberOfTeams
+        {
+            get => _selectedNumberOfTeams;
+            set => SetProperty(ref _selectedNumberOfTeams, value);
+        }
+
+        public List<int> TeamCounts => _teamCounts;
+
         public ICommand GenerateBracketCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
@@ -20,20 +36,29 @@ namespace UCL_Tournament_Manager.ViewModels
         public GenerateBracketViewModel(TournamentService tournamentService)
         {
             _tournamentService = tournamentService;
-            Matches = new ObservableCollection<Models.Match>();
+            Tournaments = new ObservableCollection<Tournament>();
+            LoadTournaments();
 
             GenerateBracketCommand = new RelayCommand(async () => await GenerateBracketAsync());
             NavigateBackCommand = new RelayCommand(() => NavigateBack?.Invoke());
         }
 
+        private async void LoadTournaments()
+        {
+            var tournaments = await _tournamentService.GetTournamentsAsync();
+            Tournaments.Clear();
+            foreach (var tournament in tournaments)
+            {
+                Tournaments.Add(tournament);
+            }
+        }
+
         private async Task GenerateBracketAsync()
         {
-            await _tournamentService.GenerateBracketAsync(TournamentId);
-            var matches = await _tournamentService.GetMatchesByTournamentIdAsync(TournamentId);
-            Matches.Clear();
-            foreach (var match in matches)
+            if (SelectedTournament != null)
             {
-                Matches.Add(match);
+                await _tournamentService.GenerateBracketAsync(SelectedTournament.TournamentId, SelectedNumberOfTeams);
+                NavigateBack?.Invoke();
             }
         }
     }

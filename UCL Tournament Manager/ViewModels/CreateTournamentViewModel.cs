@@ -49,6 +49,7 @@ namespace UCL_Tournament_Manager.ViewModels
         {
             await _tournamentService.CreateTournamentAsync(Name, Location, StartDate, EndDate);
             LoadData();
+            NavigateBack?.Invoke();
         }
     }
 }
