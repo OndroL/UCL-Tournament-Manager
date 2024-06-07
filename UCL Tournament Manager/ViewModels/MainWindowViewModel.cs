@@ -19,7 +19,7 @@ namespace UCL_Tournament_Manager.ViewModels
         private bool _isMainViewVisible;
 
         public ObservableCollection<Tournament> Tournaments { get; set; }
-        public ICommand NavigateToCreateTournamentCommand { get; }
+        public ICommand NavigateToTournamentsCommand { get; }
         public ICommand NavigateToCreateTeamCommand { get; }
         public ICommand NavigateToGenerateBracketCommand { get; }
         public ICommand NavigateToAddScoreCommand { get; }
@@ -45,7 +45,7 @@ namespace UCL_Tournament_Manager.ViewModels
             _tournamentService = tournamentService;
             Tournaments = new ObservableCollection<Tournament>();
 
-            NavigateToCreateTournamentCommand = new RelayCommand(NavigateToCreateTournamentView);
+            NavigateToTournamentsCommand = new RelayCommand(NavigateToTournamentsView);
             NavigateToCreateTeamCommand = new RelayCommand(NavigateToCreateTeamView);
             NavigateToGenerateBracketCommand = new RelayCommand(NavigateToGenerateBracketView);
             NavigateToAddScoreCommand = new RelayCommand(NavigateToAddScoreView);
@@ -85,11 +85,11 @@ namespace UCL_Tournament_Manager.ViewModels
             });
         }
 
-        private void NavigateToCreateTournamentView()
+        private void NavigateToTournamentsView()
         {
-            var createTournamentViewModel = new CreateTournamentViewModel(_tournamentService);
-            createTournamentViewModel.NavigateBack = () => CurrentView = null;
-            CurrentView = new CreateTournamentView { DataContext = createTournamentViewModel };
+            var tournamentsViewModel = new TournamentsViewModel(_tournamentService);
+            tournamentsViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new TournamentsView { DataContext = tournamentsViewModel };
         }
 
         private void NavigateToCreateTeamView()

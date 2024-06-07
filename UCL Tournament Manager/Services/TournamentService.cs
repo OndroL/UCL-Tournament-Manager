@@ -36,6 +36,36 @@ namespace UCL_Tournament_Manager.Services
             await _repository.SaveChangesAsync();
         }
 
+        public async Task UpdateTournamentAsync(Tournament tournament)
+        {
+            await _repository.UpdateAsync(tournament);
+        }
+
+        public async Task DeleteTournamentAsync(Tournament tournament)
+        {
+            var teams = await _repository.GetAllAsync<Team>();
+            var groups = await _repository.GetAllAsync<Group>();
+            var matches = await _repository.GetAllAsync<Match>();
+
+            var tournamentTeams = teams.Where(t => t.TournamentId == tournament.TournamentId).ToList();
+            foreach (var team in tournamentTeams)
+            {
+                await _repository.DeleteAsync(team);
+            }
+
+            var tournamentGroups = groups.Where(g => g.TournamentId == tournament.TournamentId).ToList();
+            foreach (var group in tournamentGroups)
+            {
+                var groupMatches = matches.Where(m => m.GroupId == group.GroupId).ToList();
+                foreach (var match in groupMatches)
+                {
+                    await _repository.DeleteAsync(match);
+                }
+                await _repository.DeleteAsync(group);
+            }
+            await _repository.DeleteAsync(tournament);
+        }
+
         public async Task RegisterTeamAsync(int tournamentId, string teamName)
         {
             var team = new Team

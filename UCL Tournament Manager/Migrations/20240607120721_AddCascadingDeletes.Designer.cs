@@ -12,8 +12,8 @@ using UCL_Tournament_Manager.Data;
 namespace UCL_Tournament_Manager.Migrations
 {
     [DbContext(typeof(TournamentContext))]
-    [Migration("20240516122243_InitialMigrationFixed")]
-    partial class InitialMigrationFixed
+    [Migration("20240607120721_AddCascadingDeletes")]
+    partial class AddCascadingDeletes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,7 +192,8 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     b.HasOne("UCL_Tournament_Manager.Models.Group", "Group")
                         .WithMany("Matches")
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Match", "NextMatch")
                         .WithMany()
@@ -241,12 +242,13 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     b.HasOne("UCL_Tournament_Manager.Models.Group", "Group")
                         .WithMany("Teams")
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
                         .WithMany("Teams")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Group");
 

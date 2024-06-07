@@ -189,7 +189,8 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     b.HasOne("UCL_Tournament_Manager.Models.Group", "Group")
                         .WithMany("Matches")
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Match", "NextMatch")
                         .WithMany()
@@ -238,12 +239,13 @@ namespace UCL_Tournament_Manager.Migrations
                 {
                     b.HasOne("UCL_Tournament_Manager.Models.Group", "Group")
                         .WithMany("Teams")
-                        .HasForeignKey("GroupId");
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("UCL_Tournament_Manager.Models.Tournament", "Tournament")
                         .WithMany("Teams")
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Group");
 

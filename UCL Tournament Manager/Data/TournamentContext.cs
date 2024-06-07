@@ -53,23 +53,26 @@ namespace UCL_Tournament_Manager.Data
             modelBuilder.Entity<Tournament>()
                 .HasMany(t => t.Groups)
                 .WithOne(g => g.Tournament)
-                .HasForeignKey(g => g.TournamentId);
+                .HasForeignKey(g => g.TournamentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Teams)
                 .WithOne(t => t.Group)
-                .HasForeignKey(t => t.GroupId);
+                .HasForeignKey(t => t.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Group>()
                 .HasMany(g => g.Matches)
                 .WithOne(m => m.Group)
-                .HasForeignKey(m => m.GroupId);
+                .HasForeignKey(m => m.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Tournament>()
                 .HasMany(t => t.Teams)
                 .WithOne(t => t.Tournament)
                 .HasForeignKey(t => t.TournamentId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

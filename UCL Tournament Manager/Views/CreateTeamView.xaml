@@ -4,6 +4,7 @@
     <StackPanel>
         <TextBox Text="{Binding TeamName, UpdateSourceTrigger=PropertyChanged}" />
         <Button Command="{Binding CreateTeamCommand}" Content="Create Team" />
+        
         <Button Command="{Binding NavigateBackCommand}" Content="Back to Main" />
         <ListBox ItemsSource="{Binding Teams}" DisplayMemberPath="Name" />
     </StackPanel>

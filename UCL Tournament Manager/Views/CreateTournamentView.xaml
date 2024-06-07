@@ -6,7 +6,7 @@
         <TextBox Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}"/>
         <DatePicker SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" />
         <DatePicker SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}" />
-        <Button Command="{Binding CreateTournamentCommand}" Content="Create Tournament" />
-        <Button Command="{Binding NavigateBackCommand}" Content="Back" />
+        <Button Command="{Binding CreateTournamentCommand}" Content="Create Tournament" Margin="10"/>
+        <Button Command="{Binding NavigateBackCommand}" Content="Back" Margin="10"/>
     </StackPanel>
 </UserControl>
