@@ -1,4 +1,14 @@
-﻿using UCL_Tournament_Manager.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using CsvHelper;
+using Microsoft.EntityFrameworkCore;
+using UCL_Tournament_Manager.Data;
 using UCL_Tournament_Manager.Models;
 
 namespace UCL_Tournament_Manager.Services
@@ -29,8 +39,7 @@ namespace UCL_Tournament_Manager.Services
                 Name = name,
                 Location = location,
                 StartDate = startDate,
-                EndDate = endDate,
-                Teams = null
+                EndDate = endDate
             };
             await _repository.AddAsync(tournament);
             await _repository.SaveChangesAsync();
@@ -63,6 +72,13 @@ namespace UCL_Tournament_Manager.Services
                 }
                 await _repository.DeleteAsync(group);
             }
+
+            var tournamentMatches = matches.Where(m => m.TournamentId == tournament.TournamentId && m.GroupId == null).ToList();
+            foreach (var match in tournamentMatches)
+            {
+                await _repository.DeleteAsync(match);
+            }
+
             await _repository.DeleteAsync(tournament);
         }
 
@@ -243,6 +259,10 @@ namespace UCL_Tournament_Manager.Services
             {
                 nextRoundMatches = await CreateNextRoundMatchesAsync(tournament, nextRoundMatches, nextRoundMatches.Count);
             }
+
+            tournament.Matches = matches.Concat(nextRoundMatches).ToList();
+            await _repository.UpdateAsync(tournament);
+            await _repository.SaveChangesAsync();
         }
 
         private async Task<List<Match>> CreateNextRoundMatchesAsync(Tournament tournament, List<Match> currentRoundMatches, int matchCount)
@@ -271,6 +291,176 @@ namespace UCL_Tournament_Manager.Services
             await _repository.SaveChangesAsync();
 
             return nextRoundMatches;
+        }
+
+        public async Task<IEnumerable<Group>> GetGroupsByTournamentIdAsync(int tournamentId)
+        {
+            var groups = await _repository.GetAllAsync<Group>();
+            return groups.Where(g => g.TournamentId == tournamentId);
+        }
+
+        public async Task GenerateGroupsAsync(int tournamentId, int numberOfGroups)
+        {
+            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
+
+            if (tournament == null)
+            {
+                throw new Exception("Tournament not found");
+            }
+
+            var teams = await _repository.GetAllAsync<Team>();
+            var teamsList = teams.ToList();
+
+            if (teamsList.Count < numberOfGroups * 2)
+            {
+                throw new Exception("Not enough teams to generate the specified number of groups");
+            }
+
+            var random = new Random();
+            teamsList = teamsList.OrderBy(t => random.Next()).ToList();
+            var groupSize = teamsList.Count / numberOfGroups;
+            var groups = new List<Group>();
+
+            for (int i = 0; i < numberOfGroups; i++)
+            {
+                var group = new Group
+                {
+                    GroupName = $"Group {i + 1}",
+                    TournamentId = tournamentId,
+                    Tournament = tournament
+                };
+
+                await _repository.AddAsync(group);
+                groups.Add(group);
+            }
+
+            await _repository.SaveChangesAsync();
+
+            for (int i = 0; numberOfGroups > i; i++)
+            {
+                var group = groups[i];
+                group.Teams = teamsList.Skip(i * groupSize).Take(groupSize).ToList();
+
+                foreach (var team in group.Teams)
+                {
+                    team.GroupId = group.GroupId;
+                    await _repository.UpdateAsync(team);
+                }
+            }
+
+            await _repository.SaveChangesAsync();
+
+            foreach (var group in groups)
+            {
+                var groupTeams = group.Teams.ToList();
+                for (int i = 0; groupTeams.Count > i; i++)
+                {
+                    for (int j = i + 1; groupTeams.Count > j; j++)
+                    {
+                        var match = new Match
+                        {
+                            TournamentId = tournamentId,
+                            Tournament = tournament,
+                            GroupId = group.GroupId,
+                            Team1Id = groupTeams[i].TeamId,
+                            Team2Id = groupTeams[j].TeamId
+                        };
+                        await _repository.AddAsync(match);
+                    }
+                }
+            }
+
+            await _repository.SaveChangesAsync();
+        }
+
+        public async Task ExportTournamentToCsvAsync(int tournamentId, string filePath)
+        {
+            var tournament = await _repository.GetByIdAsync<Tournament>(tournamentId);
+
+            if (tournament == null)
+            {
+                throw new Exception("Tournament not found");
+            }
+
+            var matches = await _repository.GetAllAsync<Match>();
+            var tournamentMatches = matches.Where(m => m.TournamentId == tournamentId).ToList();
+
+            using (var writer = new StreamWriter(filePath))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+
+                csv.WriteRecord(new { tournament.TournamentId, tournament.Name, tournament.Location, tournament.StartDate, tournament.EndDate });
+                await writer.WriteLineAsync();
+
+                if (tournament.Groups != null && tournament.Groups.Any())
+                {
+                    foreach (var group in tournament.Groups)
+                    {
+                        csv.WriteRecord(new { GroupId = group.GroupId, GroupName = group.GroupName });
+                        await writer.WriteLineAsync();
+
+                        foreach (var team in group.Teams)
+                        {
+                            csv.WriteRecord(new { TeamId = team.TeamId, TeamName = team.Name, GroupId = team.GroupId });
+                            await writer.WriteLineAsync();
+                        }
+                    }
+                }
+
+                foreach (var match in tournamentMatches)
+                {
+                    var matchRecord = new
+                    {
+                        MatchId = match.MatchId,
+                        Team1Id = match.Team1Id,
+                        Team1Name = match.Team1?.Name ?? "TBD",
+                        Team2Id = match.Team2Id,
+                        Team2Name = match.Team2?.Name ?? "TBD",
+                        Team1Score = match.Team1Score,
+                        Team2Score = match.Team2Score,
+                        GroupId = match.GroupId,
+                        TournamentId = match.TournamentId,
+                        IsTeam1Winner = match.IsTeam1Winner
+                    };
+                    csv.WriteRecord(matchRecord);
+                    await writer.WriteLineAsync();
+                }
+            }
+        }
+
+        public async Task ExportTournamentToJsonAsync(int tournamentId, string filePath)
+        {
+            var tournament = await _repository
+                .GetAll<Tournament>()
+                .Include(t => t.Groups)
+                    .ThenInclude(g => g.Teams)
+                .Include(t => t.Groups)
+                    .ThenInclude(g => g.Matches)
+                .Include(t => t.Teams)
+                .FirstOrDefaultAsync(t => t.TournamentId == tournamentId);
+
+            if (tournament == null)
+            {
+                throw new Exception("Tournament not found");
+            }
+
+            var teams = tournament.Teams.ToList();
+            var teamIds = teams.Select(t => t.TeamId).ToList();
+            var matches = await _repository.GetAll<Match>()
+                .Where(m => teamIds.Contains((int)m.Team1Id) || teamIds.Contains((int)m.Team2Id))
+                .ToListAsync();
+
+            tournament.Matches = matches;
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                MaxDepth = 128,
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+
+            var json = JsonSerializer.Serialize(tournament, jsonOptions);
+            await File.WriteAllTextAsync(filePath, json);
         }
     }
 }

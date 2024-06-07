@@ -23,6 +23,8 @@ namespace UCL_Tournament_Manager.ViewModels
         public ICommand NavigateToTeamsCommand { get; }
         public ICommand NavigateToGenerateBracketCommand { get; }
         public ICommand NavigateToAddScoreCommand { get; }
+        public ICommand NavigateToGenerateGroupsViewCommand { get; }
+        public ICommand NavigateToExportTournamentCommand { get; }
 
         public object? CurrentView
         {
@@ -49,8 +51,10 @@ namespace UCL_Tournament_Manager.ViewModels
             NavigateToTeamsCommand = new RelayCommand(NavigateToTeamsView);
             NavigateToGenerateBracketCommand = new RelayCommand(NavigateToGenerateBracketView);
             NavigateToAddScoreCommand = new RelayCommand(NavigateToAddScoreView);
+            NavigateToGenerateGroupsViewCommand = new RelayCommand(NavigateToGenerateGroupsView);
+            NavigateToExportTournamentCommand = new RelayCommand(NavigateToExportTournamentView);
 
-            // Configure the timer
+
             _timer = new System.Timers.Timer(5000);
             _timer.Elapsed += TimerElapsed;
             _timer.AutoReset = true;
@@ -112,5 +116,21 @@ namespace UCL_Tournament_Manager.ViewModels
             addScoreViewModel.NavigateBack = () => CurrentView = null;
             CurrentView = new AddScoreView { DataContext = addScoreViewModel };
         }
+
+        private void NavigateToGenerateGroupsView()
+        {
+            var generateGroupsViewModel = new GenerateGroupsViewModel(_tournamentService);
+            generateGroupsViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new GenerateGroupsView { DataContext = generateGroupsViewModel };
+        }
+
+        private void NavigateToExportTournamentView()
+        {
+            var exportTournamentViewModel = new ExportTournamentViewModel(_tournamentService);
+            exportTournamentViewModel.NavigateBack = () => CurrentView = null;
+            CurrentView = new ExportTournamentView { DataContext = exportTournamentViewModel };
+        }
+
+
     }
 }

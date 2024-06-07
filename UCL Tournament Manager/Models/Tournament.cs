@@ -9,5 +9,6 @@
         public required DateTime EndDate { get; set; }
         public ICollection<Group>? Groups { get; set; } = new List<Group>();
         public ICollection<Team>? Teams { get; set; } = new List<Team>();
+        public ICollection<Match>? Matches { get; set; } = new List<Match>();
     }
 }

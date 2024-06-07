@@ -14,6 +14,8 @@
             <Button Command="{Binding NavigateToTeamsCommand}" Content="Teams" Margin="5" Background="LightBlue"/>
             <Button Command="{Binding NavigateToGenerateBracketCommand}" Content="Generate Bracket" Margin="5" Background="LightBlue"/>
             <Button Command="{Binding NavigateToAddScoreCommand}" Content="Add Score" Margin="5" Background="LightBlue"/>
+            <Button Command="{Binding NavigateToGenerateGroupsViewCommand}" Content="Generate Groups" Margin="5" Background="LightBlue"/>
+            <Button Command="{Binding NavigateToExportTournamentCommand}" Content="Export of Tournaments" Margin="5" Background="LightGreen"/>
         </StackPanel>
 
         <Grid Visibility="{Binding IsMainViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}">

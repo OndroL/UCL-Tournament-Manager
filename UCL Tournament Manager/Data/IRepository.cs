@@ -14,5 +14,6 @@ namespace UCL_Tournament_Manager.Data
         Task UpdateAsync<T>(T entity) where T : class;
         Task DeleteAsync<T>(T entity) where T : class;
         Task SaveChangesAsync();
+        IQueryable<T> GetAll<T>() where T : class;
     }
 }

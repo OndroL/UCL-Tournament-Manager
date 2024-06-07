@@ -61,5 +61,10 @@ namespace UCL_Tournament_Manager.Data
             Console.WriteLine("SaveChangesAsync called.");
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<T> GetAll<T>() where T : class
+        {
+            return _context.Set<T>();
+        }
     }
 }
